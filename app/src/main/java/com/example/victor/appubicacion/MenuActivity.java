@@ -13,11 +13,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Adapter;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -73,7 +75,9 @@ public class MenuActivity extends AppCompatActivity {
 
         final Adaptador adaptador = new Adaptador(usuarios,this);
         recyclerView.setAdapter(adaptador);
-
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                new LinearLayoutManager(this).getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
 
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -86,6 +90,7 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 tv_usuario.setText(dataSnapshot.child("users").child(userId).getValue(UserInformation.class).getName());
+                aSwitch.setChecked(dataSnapshot.child("users").child(userId).getValue(UserInformation.class).isCompartir_ubicacion());
             }
 
             @Override
