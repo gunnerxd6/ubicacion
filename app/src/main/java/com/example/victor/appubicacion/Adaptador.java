@@ -10,15 +10,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
-public class Adaptador extends RecyclerView.Adapter<Adaptador.UsuariosViewHolder>{
+public class Adaptador extends RecyclerView.Adapter<Adaptador.UsuariosViewHolder> {
     List<UserInformation> usuarios;
-    Context ctx ;
+    Context ctx;
 
     public Adaptador(List<UserInformation> usuarios, Context ctx) {
         this.usuarios = usuarios;
@@ -28,7 +26,7 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.UsuariosViewHolder
     @NonNull
     @Override
     public UsuariosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_recycler,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_recycler, parent, false);
         UsuariosViewHolder holder = new UsuariosViewHolder(v);
         return holder;
     }
@@ -45,7 +43,7 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.UsuariosViewHolder
 
                 String coordinates = "http://maps.google.com/maps?daddr=" + user.latitud + "," + user.getLongitud();
 
-                Intent intent = new Intent( Intent.ACTION_VIEW, Uri.parse(coordinates) );
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(coordinates));
                 ctx.startActivity(intent);
             }
         });
@@ -57,9 +55,9 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.UsuariosViewHolder
         return usuarios.size();
     }
 
-    public static class UsuariosViewHolder extends RecyclerView.ViewHolder{
+    public static class UsuariosViewHolder extends RecyclerView.ViewHolder {
 
-        TextView usuario,ubicacion,comparte;
+        TextView usuario, ubicacion, comparte;
         ConstraintLayout items;
         Context ctx;
 

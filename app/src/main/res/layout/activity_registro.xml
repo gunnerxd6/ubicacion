@@ -60,6 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Registrar"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_registro_pass_confirmar" />
@@ -75,7 +76,7 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Confirme contraseña"
-        android:inputType="textPersonName"
+        android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_registro_pass" />

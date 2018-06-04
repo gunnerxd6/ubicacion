@@ -1,8 +1,8 @@
 package com.example.victor.appubicacion;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RegistroActivity extends AppCompatActivity {
-    EditText usuario,email,pass,pass2;
+    EditText usuario, email, pass, pass2;
     Button bt_registrar;
     FirebaseAuth mAuth;
 
@@ -34,41 +34,43 @@ public class RegistroActivity extends AppCompatActivity {
         bt_registrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                crearUsuario(email,pass,usuario,pass2);
+                crearUsuario(email, pass, usuario, pass2);
             }
         });
 
     }
 
-    private void crearUsuario(EditText email,EditText pass,EditText usuario,EditText pass2){
+    private void crearUsuario(EditText email, EditText pass, EditText usuario, EditText pass2) {
         final String s_usuario = usuario.getText().toString().trim();
         final String s_email = email.getText().toString().trim();
         final String s_pass = pass.getText().toString().trim();
         final String s_pass2 = pass2.getText().toString().trim();
-        if(s_email.equals("") || s_pass.equals("") || s_usuario.equals("")){
-            Toast.makeText(getApplicationContext(),"Debe completar todos los campos",Toast.LENGTH_SHORT).show();
-        }else{
-           if(!pass.equals(s_pass2)){
-               Toast.makeText(getApplicationContext(),"Las contraseñas no coinciden",Toast.LENGTH_SHORT).show();
-           }else{
-               mAuth.createUserWithEmailAndPassword(s_email,s_pass).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                   @Override
-                   public void onComplete(@NonNull Task<AuthResult> task) {
-                       if(task.isSuccessful()){
-                           mAuth.signInWithEmailAndPassword(s_email,s_pass);
-                           DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
-                           DatabaseReference currentUserDb = mDatabase.child(mAuth.getCurrentUser().getUid());
-                           currentUserDb.child("name").setValue(s_usuario);
-                           currentUserDb.child("compartir_ubicacion").setValue(false);
-                           Toast.makeText(getApplicationContext(),"Usuario registrado!",Toast.LENGTH_SHORT).show();
-                           mAuth.signOut();
-                           finish();
-                       }else{
-                           Toast.makeText(getApplicationContext(),"Error al registrar usuario!"+task.getException(),Toast.LENGTH_SHORT).show();
-                       }
-                   }
-               });
-           }
+        if (s_email.equals("") || s_pass.equals("") || s_usuario.equals("")) {
+            Toast.makeText(getApplicationContext(), "Debe completar todos los campos", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!s_pass.equals(s_pass2)) {
+                Toast.makeText(getApplicationContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+                pass.setText("");
+                pass2.setText("");
+            } else {
+                mAuth.createUserWithEmailAndPassword(s_email, s_pass).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            mAuth.signInWithEmailAndPassword(s_email, s_pass);
+                            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
+                            DatabaseReference currentUserDb = mDatabase.child(mAuth.getCurrentUser().getUid());
+                            currentUserDb.child("name").setValue(s_usuario);
+                            currentUserDb.child("compartir_ubicacion").setValue(false);
+                            Toast.makeText(getApplicationContext(), "Usuario registrado!", Toast.LENGTH_SHORT).show();
+                            mAuth.signOut();
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Error al registrar usuario!" + task.getException(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
         }
 
     }

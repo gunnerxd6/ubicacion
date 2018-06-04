@@ -1,7 +1,7 @@
 package com.example.victor.appubicacion;
 
 public class UserInformation {
-    private  String name;
+    private String name;
 
     private String ubicacion;
     double longitud;
@@ -26,7 +26,6 @@ public class UserInformation {
     private boolean compartir_ubicacion;
 
 
-
     public boolean isCompartir_ubicacion() {
         return compartir_ubicacion;
     }
@@ -34,6 +33,7 @@ public class UserInformation {
     public void setCompartir_ubicacion(boolean compartir_ubicacion) {
         this.compartir_ubicacion = compartir_ubicacion;
     }
+
     public String getUbicacion() {
         return ubicacion;
     }
@@ -41,10 +41,6 @@ public class UserInformation {
     public void setUbicacion(String ubicacion) {
         this.ubicacion = ubicacion;
     }
-
-
-
-
 
 
     public String getName() {

@@ -8,44 +8,36 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.Adapter;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-
 import com.google.firebase.auth.FirebaseAuth;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class MenuActivity extends AppCompatActivity {
-    TextView tv_usuario,tv_ubicacion;
+    TextView tv_usuario, tv_ubicacion;
     FirebaseAuth mAuth;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference myref,myref2;
+    DatabaseReference myref, myref2;
     Switch aSwitch;
     RecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +51,8 @@ public class MenuActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         myref = firebaseDatabase.getReference();
         myref2 = firebaseDatabase.getReference().child("users");
+
+        //Obtener localizacion
         LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new MyLocationListener();
@@ -70,10 +64,11 @@ public class MenuActivity extends AppCompatActivity {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
         }
 
+        //Cargar recyclerview
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         usuarios = new ArrayList<>();
 
-        final Adaptador adaptador = new Adaptador(usuarios,this);
+        final Adaptador adaptador = new Adaptador(usuarios, this);
         recyclerView.setAdapter(adaptador);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 new LinearLayoutManager(this).getOrientation());
@@ -84,7 +79,29 @@ public class MenuActivity extends AppCompatActivity {
                 compartiUbicacion(isChecked);
             }
         });
+        myref2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                usuarios.removeAll(usuarios);
+                for (DataSnapshot snapshot :
+                        dataSnapshot.getChildren()) {
+                    UserInformation usuario = snapshot.getValue(UserInformation.class);
+                    if (usuario.isCompartir_ubicacion() == true) {
+                        usuarios.add(usuario);
+                    }
 
+                }
+                adaptador.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        //Cargar usuario actual
         final String userId = mAuth.getCurrentUser().getUid();
         myref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -100,30 +117,9 @@ public class MenuActivity extends AppCompatActivity {
         });
 
 
-        myref2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                usuarios.removeAll(usuarios);
-                for (DataSnapshot snapshot:
-                        dataSnapshot.getChildren()) {
-                    UserInformation usuario = snapshot.getValue(UserInformation.class);
-                    if(usuario.isCompartir_ubicacion()==true){
-                        usuarios.add(usuario);
-                    }
-
-                }
-                adaptador.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
     }
-    private class MyLocationListener implements LocationListener{
+
+    private class MyLocationListener implements LocationListener {
 
         @Override
         public void onLocationChanged(Location location) {
@@ -134,10 +130,10 @@ public class MenuActivity extends AppCompatActivity {
             String ubicacion = null;
             Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
             List<Address> addresses;
-            try{
-                addresses = gcd.getFromLocation(latitude,longitude,1);
-                if(addresses.size()>0){
-                   ubicacion = addresses.get(0).getAddressLine(0);
+            try {
+                addresses = gcd.getFromLocation(latitude, longitude, 1);
+                if (addresses.size() > 0) {
+                    ubicacion = addresses.get(0).getAddressLine(0);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -172,7 +168,6 @@ public class MenuActivity extends AppCompatActivity {
         DatabaseReference currentUserDb = mDatabase.child(mAuth.getCurrentUser().getUid());
         currentUserDb.child("compartir_ubicacion").setValue(activado);
     }
-
 
 
 }
