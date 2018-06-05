@@ -37,6 +37,8 @@ public class MenuActivity extends AppCompatActivity {
     DatabaseReference myref, myref2;
     Switch aSwitch;
     RecyclerView recyclerView;
+    LocationManager locationManager;
+    LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +55,12 @@ public class MenuActivity extends AppCompatActivity {
         myref2 = firebaseDatabase.getReference().child("users");
 
         //Obtener localizacion
-        LocationManager locationManager = (LocationManager)
+       locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new MyLocationListener();
+        locationListener = new MyLocationListener();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-
+                return;
         } else {
 
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
@@ -169,5 +171,11 @@ public class MenuActivity extends AppCompatActivity {
         currentUserDb.child("compartir_ubicacion").setValue(activado);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+        locationManager.removeUpdates(locationListener);
+        locationManager = null;
+    }
 }
