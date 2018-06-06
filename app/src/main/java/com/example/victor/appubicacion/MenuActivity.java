@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -73,9 +74,9 @@ public class MenuActivity extends AppCompatActivity {
         locationListener = new MyLocationListener();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            Toast.makeText(getApplicationContext(),"Debe permitir el uso de GPS para compartir su ubicación",Toast.LENGTH_SHORT).show();
+            tv_ubicacion.setText("Ubicación no disponible");
         } else {
-
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
         }
 
@@ -189,8 +190,11 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
         locationManager.removeUpdates(locationListener);
         locationManager = null;
+        finish();
+        Intent i = new Intent(MenuActivity.this,MainActivity.class);
+        startActivity(i);
+
     }
 }

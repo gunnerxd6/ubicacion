@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                         pass.setText("");
                         Intent i = new Intent(MainActivity.this, MenuActivity.class);
                         startActivity(i);
+                        finish();
 
                     } else {
                         Toast.makeText(getApplicationContext(), "Error en la autenticación", Toast.LENGTH_SHORT).show();
