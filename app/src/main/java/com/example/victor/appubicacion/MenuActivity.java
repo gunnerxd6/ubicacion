@@ -2,6 +2,7 @@ package com.example.victor.appubicacion;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -14,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -36,6 +39,7 @@ public class MenuActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     DatabaseReference myref, myref2;
     Switch aSwitch;
+    Button bt_agregar;
     RecyclerView recyclerView;
     LocationManager locationManager;
     LocationListener locationListener;
@@ -50,9 +54,18 @@ public class MenuActivity extends AppCompatActivity {
         tv_usuario = findViewById(R.id.tv_nombre);
         tv_ubicacion = findViewById(R.id.tv_ubicacion);
         aSwitch = findViewById(R.id.switch1);
+        bt_agregar = findViewById(R.id.bt_menu_agregar);
+        bt_agregar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MenuActivity.this,AmigosActivity.class);
+                startActivity(i);
+            }
+        });
         firebaseDatabase = FirebaseDatabase.getInstance();
         myref = firebaseDatabase.getReference();
         myref2 = firebaseDatabase.getReference().child("users");
+
 
         //Obtener localizacion
        locationManager = (LocationManager)
@@ -60,7 +73,7 @@ public class MenuActivity extends AppCompatActivity {
         locationListener = new MyLocationListener();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-                return;
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
         } else {
 
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
@@ -87,6 +100,8 @@ public class MenuActivity extends AppCompatActivity {
                 usuarios.removeAll(usuarios);
                 for (DataSnapshot snapshot :
                         dataSnapshot.getChildren()) {
+
+
                     UserInformation usuario = snapshot.getValue(UserInformation.class);
                     if (usuario.isCompartir_ubicacion() == true) {
                         usuarios.add(usuario);
