@@ -42,8 +42,8 @@ public class MenuActivity extends AppCompatActivity {
     Switch aSwitch;
     Button bt_agregar;
     RecyclerView recyclerView;
-    LocationManager locationManager;
-    LocationListener locationListener;
+    //LocationManager locationManager;
+    //LocationListener locationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,16 +69,18 @@ public class MenuActivity extends AppCompatActivity {
 
 
         //Obtener localizacion
-       locationManager = (LocationManager)
+        LocationManager locationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new MyLocationListener();
+        LocationListener locationListener = new MyLocationListener();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
             Toast.makeText(getApplicationContext(),"Debe permitir el uso de GPS para compartir su ubicación",Toast.LENGTH_SHORT).show();
             tv_ubicacion.setText("Ubicación no disponible");
         } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 10, locationListener);
+
         }
+
 
         //Cargar recyclerview
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -190,8 +192,8 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        locationManager.removeUpdates(locationListener);
-        locationManager = null;
+       // locationManager.removeUpdates(locationListener);
+        // locationManager = null;
         finish();
         Intent i = new Intent(MenuActivity.this,MainActivity.class);
         startActivity(i);
