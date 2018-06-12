@@ -1,6 +1,6 @@
 package com.example.victor.appubicacion;
 
-import android.Manifest;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,8 +9,10 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,8 +44,10 @@ public class MenuActivity extends AppCompatActivity {
     Switch aSwitch;
     Button bt_agregar;
     RecyclerView recyclerView;
-    //LocationManager locationManager;
-    //LocationListener locationListener;
+    LocationManager locationManager;
+    LocationListener locationListener;
+    final int LOCATION_PERMISSION_REQUEST_CODE = 1252;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,17 +73,7 @@ public class MenuActivity extends AppCompatActivity {
 
 
         //Obtener localizacion
-        LocationManager locationManager = (LocationManager)
-                getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new MyLocationListener();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
-            Toast.makeText(getApplicationContext(),"Debe permitir el uso de GPS para compartir su ubicación",Toast.LENGTH_SHORT).show();
-            tv_ubicacion.setText("Ubicación no disponible");
-        } else {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 10, locationListener);
-
-        }
+        obtenerUbicacion();
 
 
         //Cargar recyclerview
@@ -189,6 +183,32 @@ public class MenuActivity extends AppCompatActivity {
         currentUserDb.child("compartir_ubicacion").setValue(activado);
     }
 
+    private void obtenerUbicacion(){
+
+        if (ContextCompat.checkSelfPermission(MenuActivity.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            if (Build.VERSION.SDK_INT >= 23) { // Marshmallow
+
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            }
+
+        } else { // no need to ask for permission
+            // start to find location...
+            locationManager = (LocationManager)
+                    getSystemService(Context.LOCATION_SERVICE);
+            locationListener = new MyLocationListener();
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 10, locationListener);
+        }
+      /*  if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,}, 1000);
+            Toast.makeText(getApplicationContext(),"Debe permitir el uso de GPS para compartir su ubicación",Toast.LENGTH_SHORT).show();
+            tv_ubicacion.setText("Ubicación no disponible");
+        } else {
+
+        } */
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -197,6 +217,27 @@ public class MenuActivity extends AppCompatActivity {
         finish();
         Intent i = new Intent(MenuActivity.this,MainActivity.class);
         startActivity(i);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                // start to find location...
+                obtenerUbicacion();
+
+            } else { // if permission is not granted
+                Toast.makeText(getApplicationContext(),"Debe permitir el uso de la localizacion",Toast.LENGTH_LONG).show();
+                Intent i = new Intent(MenuActivity.this,MainActivity.class);
+                startActivity(i);
+                this.finish();
+            }
+        }
+
 
     }
 }
