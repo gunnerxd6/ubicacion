@@ -2,6 +2,7 @@ package com.example.victor.appubicacion;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -13,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -115,6 +117,7 @@ public class MenuActivity extends AppCompatActivity {
         });
 
 
+
         //Cargar usuario actual
         final String userId = mAuth.getCurrentUser().getUid();
         myref.addValueEventListener(new ValueEventListener() {
@@ -211,12 +214,27 @@ public class MenuActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MenuActivity.this);
+        builder.setTitle("¿Cerrar sesión?");
+        builder.setMessage("Si cierra sesión, dejara de compartir su ubicacion en tiempo real.");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent o = new Intent(MenuActivity.this, MainActivity.class);
+                startActivity(o);
+
+                MenuActivity.this.finish();
+            }
+        });
+        builder.setNegativeButton("Cancelar", null);
+        builder.show();
        // locationManager.removeUpdates(locationListener);
         // locationManager = null;
-        finish();
-        Intent i = new Intent(MenuActivity.this,MainActivity.class);
-        startActivity(i);
+        //finish();
+       // Intent i = new Intent(MenuActivity.this,MainActivity.class);
+       // startActivity(i);
 
     }
 
@@ -235,6 +253,7 @@ public class MenuActivity extends AppCompatActivity {
                 Intent i = new Intent(MenuActivity.this,MainActivity.class);
                 startActivity(i);
                 this.finish();
+                mAuth.signOut();
             }
         }
 

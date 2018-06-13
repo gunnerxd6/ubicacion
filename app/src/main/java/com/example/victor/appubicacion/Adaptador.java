@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -52,6 +53,8 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.UsuariosViewHolder
 
     @Override
     public int getItemCount() {
+        if(usuarios.size()==0)
+            Toast.makeText(ctx,"Actualmente ningun usuario esta compartiendo su ubicación",Toast.LENGTH_LONG).show();
         return usuarios.size();
     }
 
