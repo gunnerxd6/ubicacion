@@ -4,6 +4,7 @@ package com.example.victor.appubicacion;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +14,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -46,6 +50,7 @@ public class RegistroActivity extends AppCompatActivity {
         final String s_email = email.getText().toString().trim();
         final String s_pass = pass.getText().toString().trim();
         final String s_pass2 = pass2.getText().toString().trim();
+
         if (s_email.equals("") || s_pass.equals("") || s_usuario.equals("")) {
             Toast.makeText(getApplicationContext(), "Debe completar todos los campos", Toast.LENGTH_SHORT).show();
         } else {
@@ -67,9 +72,25 @@ public class RegistroActivity extends AppCompatActivity {
                             mAuth.signOut();
                             finish();
                         } else {
-                            Toast.makeText(getApplicationContext(), "Error al registrar usuario!", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(), "Error al registrar usuario!", Toast.LENGTH_SHORT).show();
+                            try {
+                                throw task.getException();
+                            } catch(FirebaseAuthWeakPasswordException e) {
+                                Toast.makeText(getApplicationContext(), "La contraseña debe tener minimo 6 caracteres!", Toast.LENGTH_SHORT).show();
+                            } catch(FirebaseAuthInvalidCredentialsException e) {
+                                Toast.makeText(getApplicationContext(), "El email no es valido!", Toast.LENGTH_SHORT).show();
+                            } catch(FirebaseAuthUserCollisionException e) {
+                                Toast.makeText(getApplicationContext(), "El email ya esta en uso!", Toast.LENGTH_SHORT).show();
+
+                            } catch(Exception e) {
+                                Toast.makeText(getApplicationContext(), "Error al registrar usuario!", Toast.LENGTH_SHORT).show();
+                            }
+
                         }
-                    }
+
+
+                        }
+
                 });
             }
         }

@@ -14,12 +14,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 public class AmigosActivity extends AppCompatActivity {
     EditText et_nombre_amigo;
     Button bt_agregar_amigo;
     FirebaseAuth mAuth;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +32,6 @@ public class AmigosActivity extends AppCompatActivity {
             }
         });
     }
-
     private void agregarAmigo(final EditText nombre) {
         final String s_usuario = nombre.getText().toString().trim();
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
@@ -49,8 +46,6 @@ public class AmigosActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "key: " + key, Toast.LENGTH_SHORT).show();
                     if (key == null) {
                         Toast.makeText(getApplicationContext(), "El usuario: " + s_usuario + " no esta registrado", Toast.LENGTH_LONG).show();
-
-
                     } else {
                         if (key.equals(mAuth.getCurrentUser().getUid().toString())) {
                             Toast.makeText(getApplicationContext(), "Debes agregar un usuario distinto al tuyo!", Toast.LENGTH_LONG).show();
@@ -61,19 +56,11 @@ public class AmigosActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), key, Toast.LENGTH_SHORT).show();
                         }
                     }
-
-
                 }
-
-
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
-
-
     }
 }
