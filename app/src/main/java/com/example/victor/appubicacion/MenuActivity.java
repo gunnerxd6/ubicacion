@@ -76,7 +76,7 @@ public class MenuActivity extends AppCompatActivity {
 
         //Obtener localizacion
         obtenerUbicacion();
-
+//
 
         //Cargar recyclerview
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
